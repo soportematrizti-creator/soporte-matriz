@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATRIX_OS // Ticket Classification Intelligence</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #020813;
+            --blue-glow: #00d9ff;
+            --blue-core: #0077ff;
+            --magenta-glow: #ff0055;
+            --green-glow: #00ff88;
+            --yellow-glow: #ffcc00;
+            --glass-card: rgba(4, 20, 48, 0.7);
+            --border-neon: rgba(0, 217, 255, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            background-image:
+                radial-gradient(circle at 50% -20%, rgba(0, 217, 255, 0.35) 0%, transparent 70%),
+                radial-gradient(circle at 50% 120%, rgba(0, 119, 255, 0.25) 0%, transparent 60%),
+                linear-gradient(to bottom, rgba(0, 217, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 30px;
+            color: #e2f1ff;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .holo-container {
+            width: 100%;
+            max-width: 1400px;
+            background: var(--glass-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-neon);
+            border-radius: 4px;
+            padding: 2rem;
+            clip-path: polygon(0 20px, 20px 0,
+                    calc(100% - 20px) 0, 100% 20px,
+                    100% calc(100% - 20px), calc(100% - 20px) 100%,
+                    20px 100%, 0 calc(100% - 20px));
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.15), inset 0 0 15px rgba(0, 217, 255, 0.1);
+            position: relative;
+        }
+
+        .holo-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: var(--blue-glow);
+            box-shadow: 0 0 10px var(--blue-glow), 0 0 20px var(--blue-glow);
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+            padding-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--blue-glow);
+        }
+
+        .header h1 span {
+            color: var(--blue-glow);
+        }
+
+        /* BOTONES SCI-FI LLAMATIVOS */
+        .hud-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            padding: 12px 20px;
+            color: #fff;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid var(--blue-glow);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hud-btn:hover {
+            background: var(--blue-glow);
+            color: #000;
+            box-shadow: 0 0 25px var(--blue-glow);
+            transform: translateY(-2px);
+        }
+
+        .hud-btn-danger {
+            border-color: var(--magenta-glow);
+            background: rgba(255, 0, 85, 0.15);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+        }
+
+        .hud-btn-danger:hover {
+            background: var(--magenta-glow);
+            color: #fff;
+            box-shadow: 0 0 25px var(--magenta-glow);
+        }
+
+        .hud-btn-success {
+            border-color: var(--green-glow);
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--green-glow);
+        }
+
+        .hud-btn-success:hover {
+            background: var(--green-glow);
+            color: #000;
+            box-shadow: 0 0 25px var(--green-glow);
+        }
+
+        /* BUSCADOR */
+        .search-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(1, 10, 26, 0.85);
+            border: 2px solid var(--border-neon);
+            padding: 16px 20px 16px 50px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+        }
+
+        .search-input:focus {
+            border-color: var(--blue-glow);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.4), inset 0 0 10px rgba(0, 217, 255, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--blue-glow);
+            font-size: 1.2rem;
+        }
+
+        /* STATS BAR */
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: var(--blue-glow);
+        }
+
+        /* TABLA HOLOGRÁFICA */
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border-neon);
+            background: rgba(2, 12, 31, 0.7);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            min-height: 250px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: var(--blue-glow);
+            background: rgba(0, 217, 255, 0.1);
+            padding: 16px;
+            border-bottom: 2px solid var(--blue-glow);
+            text-shadow: 0 0 5px var(--blue-glow);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        tbody tr:hover {
+            background: rgba(0, 217, 255, 0.08);
+        }
+
+        /* CHIPS IMPACTO */
+        .badge {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 6px 12px;
+            display: inline-block;
+            text-transform: uppercase;
+            clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+        }
+
+        .badge-alto {
+            background: rgba(255, 0, 85, 0.2);
+            color: #ff3377;
+            border: 1px solid var(--magenta-glow);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
+        }
+
+        .badge-medio {
+            background: rgba(255, 204, 0, 0.2);
+            color: var(--yellow-glow);
+            border: 1px solid var(--yellow-glow);
+        }
+
+        .badge-bajo {
+            background: rgba(0, 217, 255, 0.2);
+            color: var(--blue-glow);
+            border: 1px solid var(--blue-glow);
+        }
+
+        .loading-text {
+            text-align: center;
+            padding: 3rem;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--blue-glow);
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="holo-container">
+
+        <!-- HEADER -->
+        <div class="header">
+            <h1><span>⚡ MATRIX_OS</span> // PROACTIVANET MATRIX</h1>
+            <button class="hud-btn hud-btn-success" onclick="cargarDatos()">
+                <span style="font-size: 1rem;">🔄</span> SINCRONIZAR BASE
+            </button>
+        </div>
+
+        <!-- BUSCADOR -->
+        <div class="search-container">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" onkeyup="filtrarTabla()"
+                    placeholder="Escribe síntoma, nombre, ruta o grupo resolutor...">
+            </div>
+            <button class="hud-btn hud-btn-danger" onclick="limpiarBuscador()">
+                💥 LIMPIAR
+            </button>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-bar">
+            <span>TOTAL REGISTROS: <strong id="totalReg">0</strong></span> │
+            <span>COINCIDENCIAS: <strong id="coincidenciasReg" style="color: var(--green-glow);">0</strong></span>
+        </div>
+
+        <!-- TABLA -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>NOMBRE</th>
+                        <th>RUTA COMPLETA</th>
+                        <th>GRUPO RESOLUTOR</th>
+                        <th>IMPACTO POR DEFECTO</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaCuerpo">
+                    <tr>
+                        <td colspan="4" class="loading-text">⚡ CARGANDO CONEXIÓN HOLOGRÁFICA EN TIEMPO REAL...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        // URL de tu Apps Script
+        const API_URL = "https://script.google.com/macros/s/AKfycbwWwQeP_GZp33QQdKUo0wmRg8ijhEMaJAFQ-E_3ufIxhtXuandbrFch4lca2XmaeTDyng/exec";
+
+        let datosLocales = [];
+
+        async function cargarDatos() {
+            const tbody = document.getElementById("tablaCuerpo");
+            tbody.innerHTML = `<tr><td colspan="4" class="loading-text">⚡ CONECTANDO A GOOGLE SHEETS...</td></tr>`;
+
+            try {
+                const response = await fetch(API_URL);
+                datosLocales = await response.json();
+
+                document.getElementById("totalReg").innerText = datosLocales.length;
+                renderizarTabla(datosLocales);
+            } catch (error) {
+                console.error("Error al cargar datos:", error);
+                tbody.innerHTML = `<tr><td colspan="4" class="loading-text" style="color: var(--magenta-glow);">⚠️ ERROR DE CONEXIÓN CON LA BASE DE DATOS</td></tr>`;
+            }
+        }
+
+        function renderizarTabla(datos) {
+            const tbody = document.getElementById("tablaCuerpo");
+            tbody.innerHTML = "";
+            document.getElementById("coincidenciasReg").innerText = datos.length;
+
+            if (datos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="loading-text">NO SE ENCONTRARON COINCIDENCIAS</td></tr>`;
+                return;
+            }
+
+            datos.forEach(item => {
+                const tr = document.createElement("tr");
+
+                // Asignar color según impacto
+                let badgeClass = "badge-bajo";
+                const impactoLower = (item.impacto || '').toLowerCase();
+                if (impactoLower.includes("alto") || impactoLower.includes("crítico")) badgeClass = "badge-alto";
+                else if (impactoLower.includes("medio")) badgeClass = "badge-medio";
+
+                tr.innerHTML = `
+                    <td style="color: #fff; font-weight: 700;">${item.nombre}</td>
+                    <td style="color: var(--blue-glow);">${item.ruta}</td>
+                    <td><strong style="color: #fff;">📡 ${item.grupo}</strong></td>
+                    <td><span class="badge ${badgeClass}">${item.impacto || 'N/A'}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filtrarTabla() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const filtrados = datosLocales.filter(item =>
+                item.nombre.toLowerCase().includes(query) ||
+                item.ruta.toLowerCase().includes(query) ||
+                item.grupo.toLowerCase().includes(query) ||
+                item.impacto.toLowerCase().includes(query)
+            );
+            renderizarTabla(filtrados);
+        }
+
+        function limpiarBuscador() {
+            document.getElementById("searchInput").value = "";
+            renderizarTabla(datosLocales);
+        }
+
+        // Cargar datos automáticamente al iniciar la página
+        window.onload = cargarDatos;
+    </script>
+</body>
+
+</html>
