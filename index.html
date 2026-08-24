@@ -71,7 +71,7 @@
             color: var(--accent-cyan);
         }
 
-        /* BOTÓN SINCRONIZAR BASE (Enciende en verde al pasar el mouse) */
+        /* BOTÓN SINCRONIZAR BASE */
         .btn-sync {
             background: transparent;
             color: var(--accent-cyan);
@@ -217,6 +217,52 @@
             font-style: italic;
             display: none;
         }
+
+        /* ETIQUETAS COLOREADAS (BADGES DE IMPACTO) */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .badge-critico {
+            background-color: rgba(255, 59, 48, 0.15);
+            color: #ff4d4d;
+            border: 1px solid #ff4d4d;
+            box-shadow: 0 0 8px rgba(255, 77, 77, 0.3);
+        }
+
+        .badge-alto {
+            background-color: rgba(175, 82, 222, 0.15);
+            color: #c084fc;
+            border: 1px solid #c084fc;
+            box-shadow: 0 0 8px rgba(192, 132, 252, 0.3);
+        }
+
+        .badge-medio {
+            background-color: rgba(255, 204, 0, 0.15);
+            color: #facc15;
+            border: 1px solid #facc15;
+            box-shadow: 0 0 8px rgba(250, 204, 21, 0.3);
+        }
+
+        .badge-bajo {
+            background-color: rgba(52, 199, 89, 0.15);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+        }
+
+        .badge-default {
+            background-color: rgba(148, 163, 184, 0.15);
+            color: #94a3b8;
+            border: 1px solid #64748b;
+        }
     </style>
 </head>
 <body>
@@ -270,24 +316,21 @@
 </div>
 
 <script>
-    // URL CSV pública de tu matriz en Google Sheets
     const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLt733uUKhr5iUb1ji-1prDkbGtdBG7BTQM26CAiSzSNpUDk_lEky9nA3TsXeORHKlzj67qw35HGzF/pub?output=csv";
 
     let registrosBase = [];
 
-    // 1. Normalización de texto: elimina acentos, convierte guiones/diagonales a espacios y limpia texto
     function normalizarTexto(texto) {
         return (texto || "")
             .toString()
             .toLowerCase()
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") // Remueve acentos / tildes
-            .replace(/[^a-z0-9]/g, " ")      // Convierte caracteres especiales, diagonales y parentesis en espacios
-            .replace(/\s+/g, " ")            // Reduce espacios multiples a uno solo
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]/g, " ")
+            .replace(/\s+/g, " ")
             .trim();
     }
 
-    // 2. Buscador multipalabra flexible
     function filtrarRegistros(consulta, datos) {
         const queryLimpia = normalizarTexto(consulta);
         if (!queryLimpia) return datos;
@@ -300,7 +343,26 @@
         });
     }
 
-    // 3. Renderizado de tabla con mapeo inteligente de columnas
+    // Formateador visual de niveles de impacto
+    function obtenerBadgeImpacto(valor) {
+        if (!valor) return '<span class="badge badge-default">N/A</span>';
+        
+        const norm = normalizarTexto(valor);
+        let badgeClass = 'badge-default';
+
+        if (norm.includes('critico')) {
+            badgeClass = 'badge-critico';
+        } else if (norm.includes('alto')) {
+            badgeClass = 'badge-alto';
+        } else if (norm.includes('medio')) {
+            badgeClass = 'badge-medio';
+        } else if (norm.includes('bajo')) {
+            badgeClass = 'badge-bajo';
+        }
+
+        return `<span class="badge ${badgeClass}">${valor}</span>`;
+    }
+
     function renderizarTabla(lista) {
         const tbody = document.getElementById("tablaCuerpo");
         const sinResultados = document.getElementById("sinResultados");
@@ -328,7 +390,7 @@
                 <td><strong>${col1}</strong></td>
                 <td>${col2}</td>
                 <td>${col3}</td>
-                <td>${col4}</td>
+                <td>${obtenerBadgeImpacto(col4)}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -345,7 +407,6 @@
         renderizarTabla(registrosBase);
     }
 
-    // 4. Lector CSV (Maneja comillas y saltos de línea dentro de celdas)
     function parsearCSV(texto) {
         const lineas = [];
         let fila = [];
@@ -390,7 +451,6 @@
         });
     }
 
-    // 5. Carga y sincronización de base de datos
     async function sincronizarBase() {
         const btnSync = document.getElementById("btnSync");
         if (btnSync) btnSync.style.opacity = "0.5";
@@ -399,7 +459,6 @@
             const res = await fetch(URL_GOOGLE_SHEETS_CSV);
             const text = await res.text();
             
-            // Filtro de seguridad anti-scripts de Google
             if (text.trim().startsWith("function") || text.trim().startsWith("<!DOCTYPE") || text.trim().startsWith("<script")) {
                 console.error("Respuesta no válida recibida de la URL.");
                 return;
