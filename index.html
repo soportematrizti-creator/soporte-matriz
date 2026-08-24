@@ -218,7 +218,7 @@
 
         <div class="search-container">
             <div class="input-wrapper">
-                <input type="text" id="searchInput" placeholder="Escribe para buscar (ej: conciliacion bancaria)..." oninput="ejecutarBusqueda()">
+                <input type="text" id="searchInput" placeholder="Buscar por palabra o enunciado (ej: conciliacion bancaria, baja, forzada)..." oninput="ejecutarBusqueda()">
             </div>
             <button class="btn-clear" onclick="limpiarBusqueda()">💥 LIMPIAR</button>
         </div>
@@ -248,40 +248,42 @@
     </div>
 
     <script>
-        // Si consumes tu base desde una URL (Google Sheets publicado como CSV o API), pégala aquí:
+        // SI USAS GOOGLE SHEETS CSV, PEGA TU URL PÚBLICA AQUÍ ENTRE LAS COMILLAS:
         const URL_GOOGLE_SHEETS_CSV = ""; 
 
+        // SI USAS UN ARREGLO JS LOCAL, CONSERVA AQUÍ TUS 1,644 REGISTROS:
         let registrosBase = [];
 
-        // 1. Normalización total: quita acentos, minúsculas y caracteres especiales
+        // 1. Normalización de texto: elimina acentos y pasa a minúsculas
         function normalizarTexto(texto) {
             return (texto || "")
                 .toString()
                 .toLowerCase()
                 .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-z0-9\s]/g, "");
+                .replace(/[\u0300-\u036f]/g, "");
         }
 
-        // 2. Buscador Dinámico Universal por Palabras Compuestas
+        // 2. Buscador Universal (Soporta búsquedas de 1 palabra o enunciados compuestos)
         function filtrarRegistros(consulta, datos) {
-            const consultaLimpia = normalizarTexto(consulta);
-            if (!consultaLimpia.trim()) return datos;
+            if (!consulta || !consulta.trim()) return datos;
 
-            const palabrasClave = consultaLimpia
+            const palabrasClave = normalizarTexto(consulta)
+                .trim()
                 .split(/\s+/)
-                .filter(palabra => palabra.length > 0);
+                .filter(p => p.length > 0);
 
             if (palabrasClave.length === 0) return datos;
 
             return datos.filter(item => {
-                // Obtiene el texto unificado de TODAS las columnas de la fila
+                // Obtiene todo el texto de la fila sin importar el nombre de las columnas
                 const textoFila = normalizarTexto(Object.values(item).join(" "));
+                
+                // Comprueba que TODAS las palabras buscadas existan en la fila
                 return palabrasClave.every(palabra => textoFila.includes(palabra));
             });
         }
 
-        // 3. Renderizado flexible de filas
+        // 3. Renderizado en tabla
         function renderizarTabla(lista) {
             const tbody = document.getElementById("tablaCuerpo");
             const sinResultados = document.getElementById("sinResultados");
@@ -299,7 +301,6 @@
             lista.forEach(item => {
                 const vals = Object.values(item);
                 
-                // Mapea dinámicamente según la propiedad o la posición de la columna
                 const col1 = item.NOMBRE || item.nombre || item.Nombre || vals[0] || "";
                 const col2 = item["RUTA COMPLETA"] || item.rutaCompleta || item.RutaCompleta || vals[1] || "";
                 const col3 = item["GRUPO RESOLUTOR"] || item.grupoResolutor || item.GrupoResolutor || vals[2] || "";
@@ -327,7 +328,6 @@
             renderizarTabla(registrosBase);
         }
 
-        // 4. Conexión y sincronización de datos
         async function sincronizarBase() {
             if (URL_GOOGLE_SHEETS_CSV.trim() !== "") {
                 try {
@@ -335,7 +335,7 @@
                     const text = await res.text();
                     registrosBase = parsearCSV(text);
                 } catch (e) {
-                    console.error("Error cargando Google Sheets:", e);
+                    console.error("Error al cargar la base de datos:", e);
                 }
             }
             document.getElementById("totalRegistros").textContent = registrosBase.length;
