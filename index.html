@@ -44,7 +44,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -93,7 +92,6 @@
             box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
         }
 
-        /* Controls / Search Bar */
         .search-container {
             display: flex;
             gap: 15px;
@@ -146,10 +144,9 @@
         .btn-clear:hover {
             background: var(--pink-neon);
             color: #fff;
-            box-shadow: 0 0 15px rgba(ff, 0, 85, 0.6);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
         }
 
-        /* Stats Bar */
         .stats-bar {
             display: flex;
             gap: 30px;
@@ -165,7 +162,6 @@
             font-weight: 700;
         }
 
-        /* Data Table */
         .table-container {
             border: 1px solid var(--border-glow);
             overflow-x: auto;
@@ -211,7 +207,6 @@
 <body>
 
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <div class="brand">
                 ⚡ MATRIX_OS <span>// PROACTIVANET MATRIX</span>
@@ -221,7 +216,6 @@
             </button>
         </div>
 
-        <!-- Search Inputs -->
         <div class="search-container">
             <div class="input-wrapper">
                 <input type="text" id="searchInput" placeholder="Escribe para buscar (ej: conciliacion bancaria)..." oninput="ejecutarBusqueda()">
@@ -229,14 +223,12 @@
             <button class="btn-clear" onclick="limpiarBusqueda()">💥 LIMPIAR</button>
         </div>
 
-        <!-- Stats Counter -->
         <div class="stats-bar">
             <div>TOTAL REGISTROS: <span id="totalRegistros">0</span></div>
             <div>|</div>
             <div>COINCIDENCIAS: <span id="coincidencias">0</span></div>
         </div>
 
-        <!-- Data Display Table -->
         <div class="table-container">
             <table>
                 <thead>
@@ -247,9 +239,7 @@
                         <th>IMPACTO POR DEFECTO</th>
                     </tr>
                 </thead>
-                <tbody id="tablaCuerpo">
-                    <!-- Filas renderizadas por JS -->
-                </tbody>
+                <tbody id="tablaCuerpo"></tbody>
             </table>
             <div id="sinResultados" class="empty-state" style="display: none;">
                 NO SE ENCONTRARON COINCIDENCIAS
@@ -258,48 +248,40 @@
     </div>
 
     <script>
-        // Base de datos (Se puede actualizar dinámicamente desde API / Google Sheets)
-        let registrosBase = [
-            { nombre: "Conciliación Bancaria Diaria", rutaCompleta: "Finanzas / Tesorería / Conciliación", grupoResolutor: "Soporte Finanzas", impacto: "Medio" },
-            { nombre: "Apertura de Caja POS", rutaCompleta: "Punto de Venta / Cajas / Operación", grupoResolutor: "Mesa POS", impacto: "Alto" },
-            { nombre: "Error en Depósito Bancario", rutaCompleta: "Finanzas / Bancos / Conciliación", grupoResolutor: "Soporte Finanzas", impacto: "Alto" },
-            { nombre: "Fallo de Impresora Fiscal", rutaCompleta: "Hardware / Periféricos / Impresoras", grupoResolutor: "Soporte Campo", impacto: "Bajo" }
-        ];
+        // Si consumes tu base desde una URL (Google Sheets publicado como CSV o API), pégala aquí:
+        const URL_GOOGLE_SHEETS_CSV = ""; 
 
-        // 1. Normalizador de texto: Remueve acentos, convierte a minúsculas y elimina caracteres especiales
+        let registrosBase = [];
+
+        // 1. Normalización total: quita acentos, minúsculas y caracteres especiales
         function normalizarTexto(texto) {
             return (texto || "")
                 .toString()
                 .toLowerCase()
                 .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "") // Elimina tildes/acentos
-                .replace(/[^a-z0-9\s]/g, "");    // Elimina signos y puntuación
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9\s]/g, "");
         }
 
-        // 2. Motor de búsqueda para palabras compuestas y frases
+        // 2. Buscador Dinámico Universal por Palabras Compuestas
         function filtrarRegistros(consulta, datos) {
             const consultaLimpia = normalizarTexto(consulta);
             if (!consultaLimpia.trim()) return datos;
 
-            // Divide la consulta por espacios descartando conectores o letras de 1 carácter
             const palabrasClave = consultaLimpia
                 .split(/\s+/)
-                .filter(palabra => palabra.length > 1);
+                .filter(palabra => palabra.length > 0);
 
             if (palabrasClave.length === 0) return datos;
 
             return datos.filter(item => {
-                // Junta los campos visibles en un solo string para buscar en todos
-                const campoCompleto = normalizarTexto(
-                    `${item.nombre} ${item.rutaCompleta} ${item.grupoResolutor} ${item.impacto}`
-                );
-
-                // Comprueba que TODAS las palabras clave ingresadas existan en el registro
-                return palabrasClave.every(palabra => campoCompleto.includes(palabra));
+                // Obtiene el texto unificado de TODAS las columnas de la fila
+                const textoFila = normalizarTexto(Object.values(item).join(" "));
+                return palabrasClave.every(palabra => textoFila.includes(palabra));
             });
         }
 
-        // 3. Renderizado de la tabla
+        // 3. Renderizado flexible de filas
         function renderizarTabla(lista) {
             const tbody = document.getElementById("tablaCuerpo");
             const sinResultados = document.getElementById("sinResultados");
@@ -307,29 +289,37 @@
 
             document.getElementById("coincidencias").textContent = lista.length;
 
-            if (lista.length === 0) {
+            if (!lista || lista.length === 0) {
                 sinResultados.style.display = "block";
                 return;
             }
 
             sinResultados.style.display = "none";
+
             lista.forEach(item => {
+                const vals = Object.values(item);
+                
+                // Mapea dinámicamente según la propiedad o la posición de la columna
+                const col1 = item.NOMBRE || item.nombre || item.Nombre || vals[0] || "";
+                const col2 = item["RUTA COMPLETA"] || item.rutaCompleta || item.RutaCompleta || vals[1] || "";
+                const col3 = item["GRUPO RESOLUTOR"] || item.grupoResolutor || item.GrupoResolutor || vals[2] || "";
+                const col4 = item["IMPACTO POR DEFECTO"] || item.impacto || item.Impacto || vals[3] || "";
+
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-                    <td><strong>${item.nombre}</strong></td>
-                    <td>${item.rutaCompleta}</td>
-                    <td>${item.grupoResolutor}</td>
-                    <td>${item.impacto}</td>
+                    <td><strong>${col1}</strong></td>
+                    <td>${col2}</td>
+                    <td>${col3}</td>
+                    <td>${col4}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // 4. Controladores de Eventos
         function ejecutarBusqueda() {
-            const valorInput = document.getElementById("searchInput").value;
-            const resultados = filtrarRegistros(valorInput, registrosBase);
-            renderizarTabla(resultados);
+            const query = document.getElementById("searchInput").value;
+            const filtrados = filtrarRegistros(query, registrosBase);
+            renderizarTabla(filtrados);
         }
 
         function limpiarBusqueda() {
@@ -337,16 +327,35 @@
             renderizarTabla(registrosBase);
         }
 
-        function sincronizarBase() {
-            // Espacio para refrescar datos desde backend o Google Sheets API
+        // 4. Conexión y sincronización de datos
+        async function sincronizarBase() {
+            if (URL_GOOGLE_SHEETS_CSV.trim() !== "") {
+                try {
+                    const res = await fetch(URL_GOOGLE_SHEETS_CSV);
+                    const text = await res.text();
+                    registrosBase = parsearCSV(text);
+                } catch (e) {
+                    console.error("Error cargando Google Sheets:", e);
+                }
+            }
             document.getElementById("totalRegistros").textContent = registrosBase.length;
             ejecutarBusqueda();
         }
 
-        // Inicializar
+        function parsearCSV(csvText) {
+            const lineas = csvText.split(/\r\n|\n/).filter(l => l.trim() !== "");
+            if (lineas.length < 2) return [];
+            const cabeceras = lineas[0].split(",").map(h => h.trim().replace(/^"|"$/g, ''));
+            return lineas.slice(1).map(linea => {
+                const valores = linea.split(",").map(v => v.trim().replace(/^"|"$/g, ''));
+                let obj = {};
+                cabeceras.forEach((c, i) => obj[c] = valores[i] || "");
+                return obj;
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("totalRegistros").textContent = registrosBase.length;
-            renderizarTabla(registrosBase);
+            sincronizarBase();
         });
     </script>
 </body>
