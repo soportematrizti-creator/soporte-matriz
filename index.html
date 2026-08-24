@@ -258,30 +258,30 @@
     </div>
 
     <script>
-        // Base de datos (Se puede actualizar dinámicamente desde API / Google Sheets)
-        const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/1FQXrNQud4z4uLhQ1U3L8CD9lohPEfjYRkSWzBTM1PYQ/edit?usp=sharing";
-        let registrosBase = [];
+        <script>
+    // URL directa con exportación CSV para tu ID de documento
+    const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/1FQXrNQud4z4uLhQ1U3L8CD9lohPEfYRkSWzBTM1PYQ/gviz/tq?tqx=out:csv";
 
-    // 1. Normalización mejorada: reemplaza diagonales, guiones y símbolos por espacios
+    let registrosBase = [];
+
+    // 1. Normalización de texto: elimina acentos y convierte signos en espacios
     function normalizarTexto(texto) {
         return (texto || "")
             .toString()
             .toLowerCase()
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9]/g, " "); // Convierte caracteres especiales en espacios para búsquedas limpias
+            .replace(/[^a-z0-9]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
     }
 
-    // 2. Buscador tolerante a frases y palabras compuestas
+    // 2. Buscador multipalabra flexible
     function filtrarRegistros(consulta, datos) {
-        if (!consulta || !consulta.trim()) return datos;
+        const queryLimpia = normalizarTexto(consulta);
+        if (!queryLimpia) return datos;
 
-        const palabrasClave = normalizarTexto(consulta)
-            .trim()
-            .split(/\s+/)
-            .filter(p => p.length > 0);
-
-        if (palabrasClave.length === 0) return datos;
+        const palabrasClave = queryLimpia.split(" ").filter(p => p.length > 0);
 
         return datos.filter(item => {
             const textoFila = normalizarTexto(Object.values(item).join(" "));
@@ -289,7 +289,7 @@
         });
     }
 
-    // 3. Renderizado de tabla
+    // 3. Renderizado dinamico de la tabla
     function renderizarTabla(lista) {
         const tbody = document.getElementById("tablaCuerpo");
         const sinResultados = document.getElementById("sinResultados");
@@ -307,10 +307,10 @@
         lista.forEach(item => {
             const vals = Object.values(item);
             
-            const col1 = item.NOMBRE || item.nombre || item.Nombre || vals[0] || "";
-            const col2 = item["RUTA COMPLETA"] || item.rutaCompleta || item.RutaCompleta || vals[1] || "";
-            const col3 = item["GRUPO RESOLUTOR"] || item.grupoResolutor || item.GrupoResolutor || vals[2] || "";
-            const col4 = item["IMPACTO POR DEFECTO"] || item.impacto || item.Impacto || vals[3] || "";
+            const col1 = item.Nombre || item.NOMBRE || item.nombre || vals[0] || "";
+            const col2 = item["Ruta completa"] || item.RutaCompleta || item["RUTA COMPLETA"] || vals[1] || "";
+            const col3 = item["Grupo Resolutor"] || item.GrupoResolutor || item["GRUPO RESOLUTOR"] || vals[2] || "";
+            const col4 = item["Impacto por defecto"] || item.Impacto || item["IMPACTO POR DEFECTO"] || vals[3] || "";
 
             const tr = document.createElement("tr");
             tr.innerHTML = `
@@ -334,7 +334,7 @@
         renderizarTabla(registrosBase);
     }
 
-    // 4. Lector robusto de CSV (Soporta comas y comillas dentro de celdas)
+    // 4. Analizador de CSV (Maneja comillas y saltos de linea)
     function parsearCSV(texto) {
         const lineas = [];
         let fila = [];
@@ -371,23 +371,21 @@
         }
 
         if (lineas.length < 2) return [];
-        const cabeceras = lineas[0];
+        const cabeceras = lineas[0].map(h => h.replace(/^"|"$/g, ''));
         return lineas.slice(1).map(f => {
             let obj = {};
-            cabeceras.forEach((c, idx) => obj[c] = f[idx] || "");
+            cabeceras.forEach((c, idx) => obj[c] = (f[idx] || "").replace(/^"|"$/g, ''));
             return obj;
         });
     }
 
     async function sincronizarBase() {
-        if (URL_GOOGLE_SHEETS_CSV.trim() !== "") {
-            try {
-                const res = await fetch(URL_GOOGLE_SHEETS_CSV);
-                const text = await res.text();
-                registrosBase = parsearCSV(text);
-            } catch (e) {
-                console.error("Error cargando Google Sheets:", e);
-            }
+        try {
+            const res = await fetch(URL_GOOGLE_SHEETS_CSV);
+            const text = await res.text();
+            registrosBase = parsearCSV(text);
+        } catch (e) {
+            console.error("Error al cargar Google Sheets:", e);
         }
         document.getElementById("totalRegistros").textContent = registrosBase.length;
         ejecutarBusqueda();
@@ -396,6 +394,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         sincronizarBase();
     });
+
 </script>
     </script>
 </body>
