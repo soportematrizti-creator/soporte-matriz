@@ -3,276 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATRIX_OS // Ticket Classification Intelligence</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <title>MATRIX_OS // PROACTIVANET MATRIX</title>
     <style>
         :root {
-            --bg-deep: #020813;
-            --blue-glow: #00d9ff;
-            --blue-cyan: #0077ff;
-            --pink-neon: #ff0055;
-            --card-bg: rgba(6, 18, 38, 0.7);
-            --border-glow: rgba(0, 217, 255, 0.3);
-            --text-main: #e0f7fc;
+            --bg-color: #060c14;
+            --card-bg: #0b1522;
+            --border-color: #1a293d;
+            --text-primary: #e0f2fe;
+            --text-secondary: #7dd3fc;
+            --accent-cyan: #00f0ff;
+            --accent-green: #00ff88;
+            --accent-magenta: #ff0055;
+            --table-hover: #112236;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Rajdhani', sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
             padding: 20px;
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 217, 255, 0.1) 0%, transparent 70%),
-                linear-gradient(to bottom, rgba(2, 8, 19, 0.9), rgba(2, 8, 19, 0.95));
+            min-height: 100vh;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            border: 1px solid var(--border-glow);
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.15);
-            padding: 25px;
-            border-radius: 4px;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
         }
 
-        /* Header */
-        .header {
+        /* HEADER */
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
-            border-bottom: 1px solid var(--border-glow);
             padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .brand {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--blue-glow);
-            letter-spacing: 2px;
+        .title-container {
             display: flex;
             align-items: center;
             gap: 10px;
-            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
         }
 
-        .brand span {
+        .title-icon {
+            color: var(--accent-cyan);
+            font-size: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            font-weight: 700;
             color: #ffffff;
+            text-transform: uppercase;
         }
 
+        h1 span {
+            color: var(--accent-cyan);
+        }
+
+        /* BOTÓN SINCRONIZAR BASE (Enciende en verde al pasar el mouse) */
         .btn-sync {
             background: transparent;
-            border: 1px solid var(--blue-glow);
-            color: var(--blue-glow);
-            padding: 10px 20px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+            padding: 10px 18px;
+            font-size: 0.85rem;
             font-weight: 700;
-            cursor: pointer;
             letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 4px;
             transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
             display: flex;
             align-items: center;
             gap: 8px;
+            text-transform: uppercase;
         }
 
         .btn-sync:hover {
-            background: var(--blue-glow);
-            color: var(--bg-deep);
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+            background-color: rgba(0, 255, 136, 0.12);
+            color: var(--accent-green) !important;
+            border-color: var(--accent-green) !important;
+            box-shadow: 0 0 14px rgba(0, 255, 136, 0.5);
+            transform: translateY(-1px);
         }
 
-        /* Controls / Search Bar */
-        .search-container {
+        /* BUSCADOR */
+        .search-box {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
         .input-wrapper {
             position: relative;
-            flex: 1;
+            flex-grow: 1;
         }
 
-        .input-wrapper input {
-            width: 100%;
-            background: rgba(2, 12, 27, 0.8);
-            border: 1px solid var(--border-glow);
-            padding: 14px 20px 14px 45px;
-            color: #fff;
-            font-size: 18px;
-            letter-spacing: 1px;
-            outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .input-wrapper input:focus {
-            border-color: var(--blue-glow);
-            box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
-        }
-
-        .input-wrapper::before {
-            content: "🔍";
+        .search-icon {
             position: absolute;
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            opacity: 0.5;
+            color: #475569;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
         }
 
         .btn-clear {
-            background: rgba(255, 0, 85, 0.1);
-            border: 1px solid var(--pink-neon);
-            color: var(--pink-neon);
-            padding: 0 25px;
-            font-family: 'Orbitron', sans-serif;
+            background: transparent;
+            color: var(--accent-magenta);
+            border: 1px solid var(--accent-magenta);
+            padding: 0 24px;
             font-weight: 700;
-            cursor: pointer;
             letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 4px;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.85rem;
         }
 
         .btn-clear:hover {
-            background: var(--pink-neon);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(ff, 0, 85, 0.6);
+            background-color: rgba(255, 0, 85, 0.15);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
         }
 
-        /* Stats Bar */
+        /* STATS */
         .stats-bar {
-            display: flex;
-            gap: 30px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
-            margin-bottom: 20px;
+            font-size: 0.8rem;
             letter-spacing: 1px;
-            color: #8ab4f8;
+            color: #64748b;
+            margin-bottom: 15px;
+            text-transform: uppercase;
         }
 
         .stats-bar span {
-            color: var(--blue-glow);
-            font-weight: 700;
+            color: var(--text-secondary);
+            font-weight: 600;
         }
 
-        /* Data Table */
+        /* TABLA */
         .table-container {
-            border: 1px solid var(--border-glow);
+            width: 100%;
             overflow-x: auto;
-            background: rgba(2, 8, 19, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--card-bg);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
+            font-size: 0.9rem;
         }
 
         th {
-            background: rgba(0, 217, 255, 0.08);
-            color: var(--blue-glow);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
-            padding: 15px;
+            background-color: rgba(15, 23, 42, 0.9);
+            color: var(--accent-cyan);
+            padding: 14px 16px;
+            font-weight: 700;
             letter-spacing: 1px;
-            border-bottom: 1px solid var(--border-glow);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 0.8rem;
         }
 
         td {
-            padding: 14px 15px;
-            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
-            font-size: 16px;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+            color: var(--text-primary);
+            vertical-align: middle;
+            line-height: 1.4;
         }
 
-        tr:hover {
-            background: rgba(0, 217, 255, 0.05);
+        tr:hover td {
+            background-color: var(--table-hover);
         }
 
-        .empty-state {
+        td strong {
+            color: #ffffff;
+        }
+
+        .no-results {
+            padding: 40px;
             text-align: center;
-            padding: 60px 20px;
-            font-family: 'Orbitron', sans-serif;
-            color: var(--blue-glow);
-            letter-spacing: 2px;
-            opacity: 0.8;
+            color: #64748b;
+            font-style: italic;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="brand">
-                ⚡ MATRIX_OS <span>// PROACTIVANET MATRIX</span>
-            </div>
-            <button class="btn-sync" onclick="sincronizarBase()">
-                🔄 SINCRONIZAR BASE
-            </button>
+<div class="container">
+    <header>
+        <div class="title-container">
+            <span class="title-icon">⚡</span>
+            <h1><span>MATRIX_OS</span> // PROACTIVANET MATRIX</h1>
         </div>
+        <button id="btnSync" class="btn-sync" onclick="sincronizarBase()">
+            🔄 SINCRONIZAR BASE
+        </button>
+    </header>
 
-        <!-- Search Inputs -->
-        <div class="search-container">
-            <div class="input-wrapper">
-                <input type="text" id="searchInput" placeholder="Escribe para buscar (ej: conciliacion bancaria)..." oninput="ejecutarBusqueda()">
-            </div>
-            <button class="btn-clear" onclick="limpiarBusqueda()">💥 LIMPIAR</button>
+    <div class="search-box">
+        <div class="input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Escribe para buscar (ej: baja forzada, conciliacion bancaria)..." 
+                oninput="ejecutarBusqueda()"
+            >
         </div>
-
-        <!-- Stats Counter -->
-        <div class="stats-bar">
-            <div>TOTAL REGISTROS: <span id="totalRegistros">0</span></div>
-            <div>|</div>
-            <div>COINCIDENCIAS: <span id="coincidencias">0</span></div>
-        </div>
-
-        <!-- Data Display Table -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>NOMBRE</th>
-                        <th>RUTA COMPLETA</th>
-                        <th>GRUPO RESOLUTOR</th>
-                        <th>IMPACTO POR DEFECTO</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaCuerpo">
-                    <!-- Filas renderizadas por JS -->
-                </tbody>
-            </table>
-            <div id="sinResultados" class="empty-state" style="display: none;">
-                NO SE ENCONTRARON COINCIDENCIAS
-            </div>
-        </div>
+        <button class="btn-clear" onclick="limpiarBusqueda()">💥 LIMPIAR</button>
     </div>
 
-    <script>
-        <script>
-    // URL directa con exportación CSV para tu ID de documento
-    const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/1FQXrNQud4z4uLhQ1U3L8CD9lohPEfYRkSWzBTM1PYQ/gviz/tq?tqx=out:csv";
+    <div class="stats-bar">
+        TOTAL REGISTROS: <span id="totalRegistros">0</span> &nbsp;|&nbsp; COINCIDENCIAS: <span id="coincidencias">0</span>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">NOMBRE</th>
+                    <th style="width: 40%;">RUTA COMPLETA</th>
+                    <th style="width: 20%;">GRUPO RESOLUTOR</th>
+                    <th style="width: 15%;">IMPACTO POR DEFECTO</th>
+                </tr>
+            </thead>
+            <tbody id="tablaCuerpo">
+                <!-- Se llena dinámicamente -->
+            </tbody>
+        </table>
+        <div id="sinResultados" class="no-results">
+            No se encontraron registros que coincidan con la búsqueda.
+        </div>
+    </div>
+</div>
+
+<script>
+    // URL CSV pública de tu matriz en Google Sheets
+    const URL_GOOGLE_SHEETS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLt733uUKhr5iUb1ji-1prDkbGtdBG7BTQM26CAiSzSNpUDk_lEky9nA3TsXeORHKlzj67qw35HGzF/pub?output=csv";
 
     let registrosBase = [];
 
-    // 1. Normalización de texto: elimina acentos y convierte signos en espacios
+    // 1. Normalización de texto: elimina acentos, convierte guiones/diagonales a espacios y limpia texto
     function normalizarTexto(texto) {
         return (texto || "")
             .toString()
             .toLowerCase()
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9]/g, " ")
-            .replace(/\s+/g, " ")
+            .replace(/[\u0300-\u036f]/g, "") // Remueve acentos / tildes
+            .replace(/[^a-z0-9]/g, " ")      // Convierte caracteres especiales, diagonales y parentesis en espacios
+            .replace(/\s+/g, " ")            // Reduce espacios multiples a uno solo
             .trim();
     }
 
@@ -289,7 +300,7 @@
         });
     }
 
-    // 3. Renderizado dinamico de la tabla
+    // 3. Renderizado de tabla con mapeo inteligente de columnas
     function renderizarTabla(lista) {
         const tbody = document.getElementById("tablaCuerpo");
         const sinResultados = document.getElementById("sinResultados");
@@ -308,9 +319,9 @@
             const vals = Object.values(item);
             
             const col1 = item.Nombre || item.NOMBRE || item.nombre || vals[0] || "";
-            const col2 = item["Ruta completa"] || item.RutaCompleta || item["RUTA COMPLETA"] || vals[1] || "";
-            const col3 = item["Grupo Resolutor"] || item.GrupoResolutor || item["GRUPO RESOLUTOR"] || vals[2] || "";
-            const col4 = item["Impacto por defecto"] || item.Impacto || item["IMPACTO POR DEFECTO"] || vals[3] || "";
+            const col2 = item["Ruta completa"] || item.RutaCompleta || item["RUTA COMPLETA"] || item["Ruta Completa"] || vals[1] || "";
+            const col3 = item["Grupo Resolutor"] || item.GrupoResolutor || item["GRUPO RESOLUTOR"] || item["Grupo resolutor"] || vals[2] || "";
+            const col4 = item["Impacto por defecto"] || item.Impacto || item["IMPACTO POR DEFECTO"] || item["Impacto Por Defecto"] || vals[3] || "";
 
             const tr = document.createElement("tr");
             tr.innerHTML = `
@@ -334,7 +345,7 @@
         renderizarTabla(registrosBase);
     }
 
-    // 4. Analizador de CSV (Maneja comillas y saltos de linea)
+    // 4. Lector CSV (Maneja comillas y saltos de línea dentro de celdas)
     function parsearCSV(texto) {
         const lineas = [];
         let fila = [];
@@ -379,14 +390,28 @@
         });
     }
 
+    // 5. Carga y sincronización de base de datos
     async function sincronizarBase() {
+        const btnSync = document.getElementById("btnSync");
+        if (btnSync) btnSync.style.opacity = "0.5";
+
         try {
             const res = await fetch(URL_GOOGLE_SHEETS_CSV);
             const text = await res.text();
+            
+            // Filtro de seguridad anti-scripts de Google
+            if (text.trim().startsWith("function") || text.trim().startsWith("<!DOCTYPE") || text.trim().startsWith("<script")) {
+                console.error("Respuesta no válida recibida de la URL.");
+                return;
+            }
+
             registrosBase = parsearCSV(text);
         } catch (e) {
-            console.error("Error al cargar Google Sheets:", e);
+            console.error("Error al sincronizar con Google Sheets:", e);
+        } finally {
+            if (btnSync) btnSync.style.opacity = "1";
         }
+
         document.getElementById("totalRegistros").textContent = registrosBase.length;
         ejecutarBusqueda();
     }
@@ -394,8 +419,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         sincronizarBase();
     });
-
 </script>
-    </script>
+
 </body>
 </html>
