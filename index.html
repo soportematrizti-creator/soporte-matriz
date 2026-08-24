@@ -3,129 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Categorías de Incidentes - Tiendas y POS</title>
+    <title>MATRIX_OS // Ticket Classification Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e293b;
-            --accent: #2563eb;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
+            --bg-deep: #020813;
+            --blue-glow: #00d9ff;
+            --blue-cyan: #0077ff;
+            --pink-neon: #ff0055;
+            --card-bg: rgba(6, 18, 38, 0.7);
+            --border-glow: rgba(0, 217, 255, 0.3);
+            --text-main: #e0f7fc;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Rajdhani', sans-serif;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
             padding: 20px;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 217, 255, 0.1) 0%, transparent 70%),
+                linear-gradient(to bottom, rgba(2, 8, 19, 0.9), rgba(2, 8, 19, 0.95));
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-        }
-
-        header {
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        /* Controles de Búsqueda y Filtros */
-        .search-section {
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.15);
+            padding: 25px;
+            border-radius: 4px;
             background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-glow);
+            padding-bottom: 15px;
+        }
+
+        .brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--blue-glow);
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        }
+
+        .brand span {
+            color: #ffffff;
+        }
+
+        .btn-sync {
+            background: transparent;
+            border: 1px solid var(--blue-glow);
+            color: var(--blue-glow);
+            padding: 10px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sync:hover {
+            background: var(--blue-glow);
+            color: var(--bg-deep);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+        }
+
+        /* Controls / Search Bar */
+        .search-container {
+            display: flex;
+            gap: 15px;
             margin-bottom: 20px;
         }
 
-        .search-box {
+        .input-wrapper {
             position: relative;
-            margin-bottom: 15px;
+            flex: 1;
         }
 
-        .search-box input {
+        .input-wrapper input {
             width: 100%;
+            background: rgba(2, 12, 27, 0.8);
+            border: 1px solid var(--border-glow);
             padding: 14px 20px 14px 45px;
-            font-size: 1rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            letter-spacing: 1px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        .search-box input:focus {
-            border-color: var(--accent);
+        .input-wrapper input:focus {
+            border-color: var(--blue-glow);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
         }
 
-        .search-box::before {
+        .input-wrapper::before {
             content: "🔍";
             position: absolute;
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.1rem;
+            opacity: 0.5;
         }
 
-        .filter-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .btn-filter {
-            background: #f1f5f9;
-            border: 1px solid var(--border);
-            padding: 8px 14px;
-            border-radius: 20px;
+        .btn-clear {
+            background: rgba(255, 0, 85, 0.1);
+            border: 1px solid var(--pink-neon);
+            color: var(--pink-neon);
+            padding: 0 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
             cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            transition: all 0.2s;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
         }
 
-        .btn-filter:hover, .btn-filter.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
+        .btn-clear:hover {
+            background: var(--pink-neon);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(ff, 0, 85, 0.6);
         }
 
+        /* Stats Bar */
         .stats-bar {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 500;
+            gap: 30px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            color: #8ab4f8;
         }
 
-        /* Tabla de Resultados */
+        .stats-bar span {
+            color: var(--blue-glow);
+            font-weight: 700;
+        }
+
+        /* Data Table */
         .table-container {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-glow);
+            overflow-x: auto;
+            background: rgba(2, 8, 19, 0.6);
         }
 
         table {
@@ -134,217 +178,176 @@
             text-align: left;
         }
 
-        th, td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
+        th {
+            background: rgba(0, 217, 255, 0.08);
+            color: var(--blue-glow);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            padding: 15px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-glow);
         }
 
-        th {
-            background: #f1f5f9;
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        td {
+            padding: 14px 15px;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+            font-size: 16px;
         }
 
         tr:hover {
-            background-color: #f8fafc;
+            background: rgba(0, 217, 255, 0.05);
         }
 
-        .tag-domain {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-
-        .domain-1 { background: #dbeafe; color: #1e40af; }
-        .domain-2 { background: #dcfce7; color: #166534; }
-        .domain-3 { background: #fef3c7; color: #92400e; }
-        .domain-4 { background: #f3e8ff; color: #6b21a8; }
-
-        .tag-sla {
-            background: #e2e8f0;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #334155;
-        }
-
-        .no-results {
-            padding: 30px;
+        .empty-state {
             text-align: center;
-            color: var(--text-muted);
-            font-size: 1rem;
+            padding: 60px 20px;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--blue-glow);
+            letter-spacing: 2px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Buscador de Taxonomía de Incidentes (ITSM)</h1>
-        <p>Matriz estandarizada para Puntos de Venta y Operación de Tiendas (38 Categorías | 3 Niveles | 4 Dominios)</p>
-    </header>
-
-    <section class="search-section">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Buscar por síntoma, módulo, servicio, grupo resolutor o SLA...">
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand">
+                ⚡ MATRIX_OS <span>// PROACTIVANET MATRIX</span>
+            </div>
+            <button class="btn-sync" onclick="sincronizarBase()">
+                🔄 SINCRONIZAR BASE
+            </button>
         </div>
-        <div class="filter-buttons">
-            <button class="btn-filter active" onclick="filterDomain('ALL')">Todos (38)</button>
-            <button class="btn-filter" onclick="filterDomain('D1')">1. Cajas y POS (10)</button>
-            <button class="btn-filter" onclick="filterDomain('D2')">2. Operación e Inventarios (10)</button>
-            <button class="btn-filter" onclick="filterDomain('D3')">3. Infraestructura y Redes (9)</button>
-            <button class="btn-filter" onclick="filterDomain('D4')">4. Solicitudes y Accesos (9)</button>
-        </div>
-    </section>
 
-    <div class="stats-bar">
-        <span>Mostrando <strong id="visibleCount">38</strong> de 38 categorías</span>
+        <!-- Search Inputs -->
+        <div class="search-container">
+            <div class="input-wrapper">
+                <input type="text" id="searchInput" placeholder="Escribe para buscar (ej: conciliacion bancaria)..." oninput="ejecutarBusqueda()">
+            </div>
+            <button class="btn-clear" onclick="limpiarBusqueda()">💥 LIMPIAR</button>
+        </div>
+
+        <!-- Stats Counter -->
+        <div class="stats-bar">
+            <div>TOTAL REGISTROS: <span id="totalRegistros">0</span></div>
+            <div>|</div>
+            <div>COINCIDENCIAS: <span id="coincidencias">0</span></div>
+        </div>
+
+        <!-- Data Display Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>NOMBRE</th>
+                        <th>RUTA COMPLETA</th>
+                        <th>GRUPO RESOLUTOR</th>
+                        <th>IMPACTO POR DEFECTO</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaCuerpo">
+                    <!-- Filas renderizadas por JS -->
+                </tbody>
+            </table>
+            <div id="sinResultados" class="empty-state" style="display: none;">
+                NO SE ENCONTRARON COINCIDENCIAS
+            </div>
+        </div>
     </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>N1: Servicio (Dominio)</th>
-                    <th>N2: Módulo</th>
-                    <th>N3: Síntoma / Categoría</th>
-                    <th>Grupo Resolutor</th>
-                    <th>SLA Metrópolis</th>
-                </tr>
-            </thead>
-            <tbody id="incidentTableBody">
-                <!-- Se puebla mediante JavaScript -->
-            </tbody>
-        </table>
-        <div id="noResults" class="no-results" style="display: none;">
-            No se encontraron coincidencia para la búsqueda.
-        </div>
-    </div>
-</div>
+    <script>
+        // Base de datos (Se puede actualizar dinámicamente desde API / Google Sheets)
+        let registrosBase = [
+            { nombre: "Conciliación Bancaria Diaria", rutaCompleta: "Finanzas / Tesorería / Conciliación", grupoResolutor: "Soporte Finanzas", impacto: "Medio" },
+            { nombre: "Apertura de Caja POS", rutaCompleta: "Punto de Venta / Cajas / Operación", grupoResolutor: "Mesa POS", impacto: "Alto" },
+            { nombre: "Error en Depósito Bancario", rutaCompleta: "Finanzas / Bancos / Conciliación", grupoResolutor: "Soporte Finanzas", impacto: "Alto" },
+            { nombre: "Fallo de Impresora Fiscal", rutaCompleta: "Hardware / Periféricos / Impresoras", grupoResolutor: "Soporte Campo", impacto: "Bajo" }
+        ];
 
-<script>
-    // Matriz completa estandarizada de 38 categorías
-    const categoriesData = [
-        // Dominio 1: Cajas y POS (10)
-        { id: "CAT-01", dCode: "D1", dominio: "1. Cajas y POS", modulo: "POS Hardware", sintoma: "Impresora de Tickets / Térmica (Fallo de impresión o papel atascado)", resolutor: "Soporte POS N1", sla: "2 Horas" },
-        { id: "CAT-02", dCode: "D1", dominio: "1. Cajas y POS", modulo: "POS Hardware", sintoma: "Escáner / Lector de Código de Barras (No lee / Sin comunicación)", resolutor: "Soporte POS N1", sla: "4 Horas" },
-        { id: "CAT-03", dCode: "D1", dominio: "1. Cajas y POS", modulo: "POS Hardware", sintoma: "Monitor / Pantalla Táctil (Pantalla en negro / Touch no responde)", resolutor: "Soporte Técnico Campo", sla: "2 Horas" },
-        { id: "CAT-04", dCode: "D1", dominio: "1. Cajas y POS", modulo: "POS Hardware", sintoma: "Cajón de Dinero (Sin apertura automática / Bloqueo mecánico)", resolutor: "Soporte POS N1", sla: "3 Horas" },
-        { id: "CAT-05", dCode: "D1", dominio: "1. Cajas y POS", modulo: "POS Hardware", sintoma: "PinPad / Terminal Bancaria (Error de comunicación / Transacción rechazada)", resolutor: "Soporte Pasarelas POS N2", sla: "1 Hora" },
-        { id: "CAT-06", dCode: "D1", dominio: "1. Cajas y POS", modulo: "POS Software", sintoma: "Sistema POS (Aplicación congelada / Error de inicialización)", resolutor: "Soporte Aplicaciones POS", sla: "1 Hora" },
-        { id: "CAT-07", dCode: "D1", dominio: "1. Cajas y POS", modulo: "POS Software", sintoma: "Cobros y Transacciones (Diferencia de saldo / Error cobro tarjeta)", resolutor: "Soporte Operaciones POS", sla: "2 Horas" },
-        { id: "CAT-08", dCode: "D1", dominio: "1. Cajas y POS", modulo: "POS Software", sintoma: "Promociones y Descuentos (Regla comercial no aplica en caja)", resolutor: "Mesa de Ayuda Comercial", sla: "4 Horas" },
-        { id: "CAT-09", dCode: "D1", dominio: "1. Cajas y POS", modulo: "POS Periféricos", sintoma: "Báscula de Caja (Error de pesaje / Sin comunicación con POS)", resolutor: "Soporte Técnico Campo", sla: "3 Horas" },
-        { id: "CAT-10", dCode: "D1", dominio: "1. Cajas y POS", modulo: "POS Software", sintoma: "Sincronización de Ventas (Fallo en envío de cierres al ERP central)", resolutor: "Integraciones N2", sla: "2 Horas" },
-
-        // Dominio 2: Operación e Inventarios (10)
-        { id: "CAT-11", dCode: "D2", dominio: "2. Operación e Inventario", modulo: "Inventario Hardware", sintoma: "Handheld / Colector de Datos (Sin conexión a red / App bloqueada)", resolutor: "Soporte Movilidad TI", sla: "4 Horas" },
-        { id: "CAT-12", dCode: "D2", dominio: "2. Operación e Inventario", modulo: "Inventario Software", sintoma: "ERP / WMS Tienda (Error en procesamiento de traspaso mercancía)", resolutor: "Soporte ERP N2", sla: "3 Horas" },
-        { id: "CAT-13", dCode: "D2", dominio: "2. Operación e Inventario", modulo: "Inventario Operativo", sintoma: "Recepción de Proveedores (Diferencia en Orden de Compra)", resolutor: "Mesa de Ayuda Operativa", sla: "2 Horas" },
-        { id: "CAT-14", dCode: "D2", dominio: "2. Operación e Inventario", modulo: "Inventario Hardware", sintoma: "Impresora de Etiquetas (No imprime / Código desalineado)", resolutor: "Soporte Técnico Campo", sla: "4 Horas" },
-        { id: "CAT-15", dCode: "D2", dominio: "2. Operación e Inventario", modulo: "Operación Hardware", sintoma: "Reloj Checador / Biométrico (No registra marcaje de personal)", resolutor: "Soporte Sistemas HR", sla: "4 Horas" },
-        { id: "CAT-16", dCode: "D2", dominio: "2. Operación e Inventario", modulo: "Operación Audio", sintoma: "Sistema de Perifoneo / Voceo (Sin audio en piso de venta)", resolutor: "Infraestructura Campo", sla: "6 Horas" },
-        { id: "CAT-17", dCode: "D2", dominio: "2. Operación e Inventario", modulo: "Operación Seguridad", sintoma: "CCTV / Videovigilancia (Cámara fuera de línea / Falla de DVR)", resolutor: "Seguridad Electrónica", sla: "8 Horas" },
-        { id: "CAT-18", dCode: "D2", dominio: "2. Operación e Inventario", modulo: "Operación Hardware", sintoma: "Kiosco Auto-servicio (Error de app / Pantalla sin respuesta)", resolutor: "Soporte Kioscos N2", sla: "3 Horas" },
-        { id: "CAT-19", dCode: "D2", dominio: "2. Operación e Inventario", modulo: "Inventario Software", sintoma: "Conteos Cíclicos (Fallo en carga de inventario físico a sistema)", resolutor: "Soporte ERP / Logística", sla: "4 Horas" },
-        { id: "CAT-20", dCode: "D2", dominio: "2. Operación e Inventario", modulo: "Operación Media", sintoma: "Pantallas Publicitarias / Signage (Sin contenido / Conexión caída)", resolutor: "Soporte Multimedia", sla: "6 Horas" },
-
-        // Dominio 3: Infraestructura y Redes (9)
-        { id: "CAT-21", dCode: "D3", dominio: "3. Infraestructura y Redes", modulo: "Redes & Telecom", sintoma: "Enlace Principal de Datos / ISP (Tienda incomunicada / Sin internet)", resolutor: "Redes & Telecom N2", sla: "1 Hora" },
-        { id: "CAT-22", dCode: "D3", dominio: "3. Infraestructura y Redes", modulo: "Redes & Telecom", sintoma: "Enlace de Respaldo / 4G-5G (Failover no conmuta automáticamente)", resolutor: "Redes & Telecom N2", sla: "2 Horas" },
-        { id: "CAT-23", dCode: "D3", dominio: "3. Infraestructura y Redes", modulo: "Redes & Telecom", sintoma: "Access Points Wi-Fi (Pérdida de cobertura inalámbrica en tienda)", resolutor: "Redes & Telecom N1", sla: "3 Horas" },
-        { id: "CAT-24", dCode: "D3", dominio: "3. Infraestructura y Redes", modulo: "Redes & Telecom", sintoma: "Switch de Red / Cableado (Puerto dañado / Punto de red muerto)", resolutor: "Soporte Redes Campo", sla: "4 Horas" },
-        { id: "CAT-25", dCode: "D3", dominio: "3. Infraestructura y Redes", modulo: "Energía & Respaldo", sintoma: "UPS / No-Break (Alarma por batería / Sin respaldo de energía)", resolutor: "Infraestructura Eléctrica", sla: "2 Horas" },
-        { id: "CAT-26", dCode: "D3", dominio: "3. Infraestructura y Redes", modulo: "Energía & Respaldo", sintoma: "Planta Eléctrica / Tablero (Fallo de conmutación automática)", resolutor: "Mantenimiento General", sla: "2 Horas" },
-        { id: "CAT-27", dCode: "D3", dominio: "3. Infraestructura y Redes", modulo: "Servidores & TI", sintoma: "Servidor Local de Tienda (Sin respuesta / Disco saturado)", resolutor: "Administración Sistemas", sla: "1 Hora" },
-        { id: "CAT-28", dCode: "D3", dominio: "3. Infraestructura y Redes", modulo: "Impresión Oficina", sintoma: "Impresora Administrativa (Atasco mecánico / Falla de tóner)", resolutor: "Soporte Impresión N1", sla: "6 Horas" },
-        { id: "CAT-29", dCode: "D3", dominio: "3. Infraestructura y Redes", modulo: "Telefonía IP", sintoma: "Conmutador / Teléfono IP (Sin tono de llamada en tienda)", resolutor: "Telecomunicaciones N1", sla: "4 Horas" },
-
-        // Dominio 4: Solicitudes y Accesos (9)
-        { id: "CAT-30", dCode: "D4", dominio: "4. Solicitudes y Accesos", modulo: "Gestión Accesos", sintoma: "Alta / Modificación Usuario POS (Creación de perfil cajero)", resolutor: "Administrador Accesos", sla: "4 Horas" },
-        { id: "CAT-31", dCode: "D4", dominio: "4. Solicitudes y Accesos", modulo: "Gestión Accesos", sintoma: "Restablecimiento de Contraseña (Bloqueo de usuario POS/ERP)", resolutor: "Mesa de Ayuda N1", sla: "30 Mins" },
-        { id: "CAT-32", dCode: "D4", dominio: "4. Solicitudes y Accesos", modulo: "Gestión Accesos", sintoma: "Permisos Especiales de Caja (Autorización devoluciones/anulaciones)", resolutor: "Seguridad TI / Operaciones", sla: "2 Horas" },
-        { id: "CAT-33", dCode: "D4", dominio: "4. Solicitudes y Accesos", modulo: "Gestión Servicios", sintoma: "Correo Institucional Tienda (Creación / Ajuste de buzón)", resolutor: "Admin M365 / Workspace", sla: "4 Horas" },
-        { id: "CAT-34", dCode: "D4", dominio: "4. Solicitudes y Accesos", modulo: "Gestión Servicios", sintoma: "Solicitud Insumos TI (Bobinas de papel, tóner, parches de red)", resolutor: "Logística TI", sla: "24 Horas" },
-        { id: "CAT-35", dCode: "D4", dominio: "4. Solicitudes y Accesos", modulo: "Gestión Servicios", sintoma: "Solicitud Reemplazo Equipo (Sustitución por obsolescencia/daño)", resolutor: "Gestión Activos TI", sla: "24 Horas" },
-        { id: "CAT-36", dCode: "D4", dominio: "4. Solicitudes y Accesos", modulo: "Gestión Accesos", sintoma: "Conexión VPN / Acceso Remoto (Fallo de credenciales administrador)", resolutor: "Redes & Seguridad N1", sla: "2 Horas" },
-        { id: "CAT-37", dCode: "D4", dominio: "4. Solicitudes y Accesos", modulo: "Gestión Servicios", sintoma: "Mantenimiento Preventivo (Solicitud revisión física en tienda)", resolutor: "Soporte Técnico Campo", sla: "48 Horas" },
-        { id: "CAT-38", dCode: "D4", dominio: "4. Solicitudes y Accesos", modulo: "Gestión Licencias", sintoma: "Solicitud / Asignación de Licencias de Software Especializado", resolutor: "Administración Activos", sla: "12 Horas" }
-    ];
-
-    let currentDomain = 'ALL';
-
-    function renderTable() {
-        const tbody = document.getElementById('incidentTableBody');
-        const searchVal = document.getElementById('searchInput').value.toLowerCase();
-        const noResults = document.getElementById('noResults');
-        tbody.innerHTML = '';
-
-        const filteredData = categoriesData.filter(item => {
-            const matchesDomain = (currentDomain === 'ALL') || (item.dCode === currentDomain);
-            const matchesSearch = 
-                item.id.toLowerCase().includes(searchVal) ||
-                item.dominio.toLowerCase().includes(searchVal) ||
-                item.modulo.toLowerCase().includes(searchVal) ||
-                item.sintoma.toLowerCase().includes(searchVal) ||
-                item.resolutor.toLowerCase().includes(searchVal) ||
-                item.sla.toLowerCase().includes(searchVal);
-
-            return matchesDomain && matchesSearch;
-        });
-
-        document.getElementById('visibleCount').innerText = filteredData.length;
-
-        if (filteredData.length === 0) {
-            noResults.style.display = 'block';
-            return;
-        } else {
-            noResults.style.display = 'none';
+        // 1. Normalizador de texto: Remueve acentos, convierte a minúsculas y elimina caracteres especiales
+        function normalizarTexto(texto) {
+            return (texto || "")
+                .toString()
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "") // Elimina tildes/acentos
+                .replace(/[^a-z0-9\s]/g, "");    // Elimina signos y puntuación
         }
 
-        filteredData.forEach(item => {
-            const tr = document.createElement('tr');
-            
-            let tagClass = 'domain-1';
-            if (item.dCode === 'D2') tagClass = 'domain-2';
-            if (item.dCode === 'D3') tagClass = 'domain-3';
-            if (item.dCode === 'D4') tagClass = 'domain-4';
+        // 2. Motor de búsqueda para palabras compuestas y frases
+        function filtrarRegistros(consulta, datos) {
+            const consultaLimpia = normalizarTexto(consulta);
+            if (!consultaLimpia.trim()) return datos;
 
-            tr.innerHTML = `
-                <td><strong>${item.id}</strong></td>
-                <td><span class="tag-domain ${tagClass}">${item.dominio}</span></td>
-                <td><strong>${item.modulo}</strong></td>
-                <td>${item.sintoma}</td>
-                <td>${item.resolutor}</td>
-                <td><span class="tag-sla">${item.sla}</span></td>
-            `;
-            tbody.appendChild(tr);
+            // Divide la consulta por espacios descartando conectores o letras de 1 carácter
+            const palabrasClave = consultaLimpia
+                .split(/\s+/)
+                .filter(palabra => palabra.length > 1);
+
+            if (palabrasClave.length === 0) return datos;
+
+            return datos.filter(item => {
+                // Junta los campos visibles en un solo string para buscar en todos
+                const campoCompleto = normalizarTexto(
+                    `${item.nombre} ${item.rutaCompleta} ${item.grupoResolutor} ${item.impacto}`
+                );
+
+                // Comprueba que TODAS las palabras clave ingresadas existan en el registro
+                return palabrasClave.every(palabra => campoCompleto.includes(palabra));
+            });
+        }
+
+        // 3. Renderizado de la tabla
+        function renderizarTabla(lista) {
+            const tbody = document.getElementById("tablaCuerpo");
+            const sinResultados = document.getElementById("sinResultados");
+            tbody.innerHTML = "";
+
+            document.getElementById("coincidencias").textContent = lista.length;
+
+            if (lista.length === 0) {
+                sinResultados.style.display = "block";
+                return;
+            }
+
+            sinResultados.style.display = "none";
+            lista.forEach(item => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${item.nombre}</strong></td>
+                    <td>${item.rutaCompleta}</td>
+                    <td>${item.grupoResolutor}</td>
+                    <td>${item.impacto}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 4. Controladores de Eventos
+        function ejecutarBusqueda() {
+            const valorInput = document.getElementById("searchInput").value;
+            const resultados = filtrarRegistros(valorInput, registrosBase);
+            renderizarTabla(resultados);
+        }
+
+        function limpiarBusqueda() {
+            document.getElementById("searchInput").value = "";
+            renderizarTabla(registrosBase);
+        }
+
+        function sincronizarBase() {
+            // Espacio para refrescar datos desde backend o Google Sheets API
+            document.getElementById("totalRegistros").textContent = registrosBase.length;
+            ejecutarBusqueda();
+        }
+
+        // Inicializar
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("totalRegistros").textContent = registrosBase.length;
+            renderizarTabla(registrosBase);
         });
-    }
-
-    function filterDomain(domainCode) {
-        currentDomain = domainCode;
-        
-        // Actualizar estados visuales de los botones
-        const buttons = document.querySelectorAll('.btn-filter');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        
-        event.target.classList.add('active');
-        renderTable();
-    }
-
-    // Event listener para el buscador en vivo
-    document.getElementById('searchInput').addEventListener('input', renderTable);
-
-    // Render inicial
-    renderTable();
-</script>
+    </script>
 </body>
 </html>
